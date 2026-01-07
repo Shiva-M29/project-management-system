@@ -1,5 +1,6 @@
 package com.shiva.pms.pms_backend.security;
 
+import com.shiva.pms.pms_backend.entity.User;
 import com.shiva.pms.pms_backend.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -44,7 +46,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             UserDetails userDetails =
                     userDetailsService.loadUserByUsername(username);
-
+            CustomUserDetails customUserDetails=(CustomUserDetails) userDetails;
+            User user=customUserDetails.getUser();
+            Integer tokenVersionFromToken= jwtService.extractTokenVersion(token);
+            if (!tokenVersionFromToken.equals(user.getTokenVersion())) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter()
+                        .write("Session expired due to login from another device");
+                return;
+            }
             if (jwtService.validateToken(token, userDetails)) {
 
                 UsernamePasswordAuthenticationToken authToken =

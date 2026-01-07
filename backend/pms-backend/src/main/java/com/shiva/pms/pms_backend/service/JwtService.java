@@ -1,5 +1,7 @@
 package com.shiva.pms.pms_backend.service;
 
+import com.shiva.pms.pms_backend.entity.User;
+import com.shiva.pms.pms_backend.security.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,9 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 @Service
 public class JwtService {
+
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -32,7 +37,12 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
+        CustomUserDetails cud = (CustomUserDetails) userDetails;
+        User user = cud.getUser();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("tokenVersion", user.getTokenVersion());
         return Jwts.builder()
+                .claims(claims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
@@ -44,6 +54,10 @@ public class JwtService {
         return extractUsername(token).equals(userDetails.getUsername())
                 && !isTokenExpired(token);
     }
+    public Integer extractTokenVersion(String token) {
+        return extractAllClaims(token).get("tokenVersion", Integer.class);
+    }
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

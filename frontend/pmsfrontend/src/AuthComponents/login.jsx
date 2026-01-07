@@ -1,9 +1,12 @@
 import {Form,Input,Button} from "antd"; 
 import {PageWrapper, RegisterCard, Title} from './Register.styled';
+import {useNavigate} from "react-router-dom";
 import { useMutation } from '@tanstack/react-query';
+import { useContext } from "react";
+import { useAuth } from "../AuthProvider";
+import {toast} from "react-toastify";
 
 
-let localStorage = window.localStorage;
 
  function loginapi(data) {
     return fetch('http://localhost:8080/auth/login', {
@@ -19,21 +22,30 @@ let localStorage = window.localStorage;
             return response.text().then(msg=>{
                 throw new Error(msg);})
         }
-        return response.text();
+        return response.json();
     })
 }
 
 function Login()
 {
+        const {login} = useAuth();
     const [form]=Form.useForm();
+    const navigate=useNavigate();
     const mutation=useMutation({
     mutationFn: loginapi,
     onSuccess: (data) => {
-        localStorage.setItem('token', data);
-        console.log(data);
+        login(data);
+       const role=data.user.role;
+       if(role==="ADMIN")
+       {
+        navigate("/admin");
+       }
+       else
+        navigate("/employee");
+        
     }
 , onError: (error) => {
-        console.error('Login failed:', error.message);
+        toast.error('Login failed:'+ error.message);
     }});
 
     const onFinish=(values)=>{
@@ -42,7 +54,7 @@ function Login()
      return(<PageWrapper>
         <RegisterCard>
         <Title>Login</Title>
-    <Form form={form} name="login" layout="vertical" validateTrigger="onSubmit" onFinish={onFinish}>
+    <Form form={form} name="login" layout="vertical" validateTrigger="onChange" onFinish={onFinish}>
 <Form.Item label="username" name="username" rules={[{ required: true, message: 'Please input your username!' }]}>
   <Input />
 </Form.Item>
@@ -54,7 +66,6 @@ function Login()
     Login
   </Button>
 </Form.Item>
-{mutation.isError && <div style={{ color: 'red' }}>{mutation.error.message}</div>}
     </Form>
     </RegisterCard>
     </PageWrapper>);

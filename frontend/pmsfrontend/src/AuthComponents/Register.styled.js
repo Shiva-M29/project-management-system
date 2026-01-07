@@ -5,13 +5,18 @@ export const PageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f7fa;
+  background: #ffffff;
 `;
 
 export const RegisterCard = styled(Card)`
   width: 400px;
+  padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
+    @media (max-width: 480px) {
+    width: 100%;
+  }
+
 `;
 
 export const Title = styled.h2`
