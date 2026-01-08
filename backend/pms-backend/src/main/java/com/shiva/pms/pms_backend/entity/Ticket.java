@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(
@@ -41,6 +44,13 @@ public class Ticket {
         @ManyToOne
         @JoinColumn(name = "assigned_to", nullable = false)
         private User assignedTo;
+
+        @OneToMany(
+                mappedBy = "ticket",
+                cascade = CascadeType.ALL,
+                orphanRemoval = true
+        )
+        private List<Comment> comments = new ArrayList<>();
 
 
 

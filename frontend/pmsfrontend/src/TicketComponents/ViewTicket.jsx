@@ -1,4 +1,4 @@
-import {useState,useEffect} from "react";
+import {useState,useEffect,useRef} from "react";
 import { Card, Spin, Tag, Divider,Form,Input,Select,Button} from "antd";
 import { useParams,useNavigate } from "react-router-dom";
 import { useMutation, useQuery,useQueryClient } from "@tanstack/react-query";
@@ -7,12 +7,57 @@ import { useAuth } from "../AuthProvider";
 import {fetchEmployees} from "./CreateTicket.jsx";
 import { Alert } from "antd";
 import { ErrorWrapper } from "../admincomponents/AccountApproval.styled";
+import dayjs from "dayjs";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
 import {
   ViewTicketWrapper,
   TicketCard,
   Field,
 } from "./ViewTicket.styled";
 
+export const fetchComments = (ticketId, token,logout) =>
+  fetch(`http://localhost:8080/api/comments/${ticketId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then(response => {
+         if (!response.ok) {
+
+            if (response.status === 401) {
+                toast.error("Session expired. Please login again.");
+                setTimeout(logout, 3000);
+            }
+            return response.text().then(msg => {
+                throw new Error(msg);
+            });
+        }
+        return response.json();
+      }
+  );
+
+  export const addComment = ({ ticketId, content, token,logout}) =>
+  fetch(`http://localhost:8080/api/comments/${ticketId}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content }),
+  }).then(response => {
+         if (!response.ok) {
+
+            if (response.status === 401) {
+                toast.error("Session expired. Please login again.");
+                setTimeout(logout, 3000);
+            }
+            return response.text().then(msg => {
+                throw new Error(msg);
+            });
+        }
+        return response.text();
+      }
+  );
 
 function statusUpdate(id, status,logout,token) {
     return fetch(`http://localhost:8080/api/tickets/${id}/status`, {
@@ -59,12 +104,46 @@ function updateTicket(id, ticketData, logout, token) {
     });
 }
 
+
+export const RichTextEditor = ({ value, onChange }) => {
+  const editorRef = useRef(null);
+  const quillRef = useRef(null);
+
+  useEffect(() => {
+    if (!quillRef.current) {
+      quillRef.current = new Quill(editorRef.current, {
+        theme: "snow",
+        placeholder: "Write here...",
+      });
+
+      quillRef.current.on("text-change", () => {
+        onChange(quillRef.current.root.innerHTML);
+      });
+    }
+  }, []);
+
+  return (
+  <div
+    style={{
+      border: "1px solid #d9d9d9",
+      borderRadius: 6,
+      minHeight: 120,
+    }}
+  >
+    <div ref={editorRef} />
+  </div>
+);
+;
+};
+
 export default function ViewTicket() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { token, logout,user } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const queryClient = useQueryClient();
+  const [comment,setComment]=useState("");
+  
   
     const allowed = user.role === "ADMIN" || user.role === "EMPLOYEE";
 useEffect(() => {
@@ -82,14 +161,15 @@ useEffect(() => {
         Authorization: `Bearer ${token}`,
       },
     }).then((response) => {
-      if (response.status === 401) {
+      
+
+      if (!response.ok) {
+        if (response.status === 401) {
         toast.error("Session expired. Please login again.");
         setTimeout(() => {
           logout();
         }, 3000);
       }
-
-      if (!response.ok) {
        return response.text().then((msg) => {
           throw new Error(msg);
         });
@@ -103,6 +183,8 @@ useEffect(() => {
     queryKey: ["ticket", id],
     queryFn: fetchTicket,
   });
+
+  const canComment= (data) && (user.role==="ADMIN"||data.assignedTo?.id===user.id);
 
   const { data: employees } = useQuery({
       queryKey: ["employees"],
@@ -136,6 +218,22 @@ const updateMutation=useMutation({
     }
 });
 
+const { data: comments } = useQuery({
+  queryKey: ["comments", id],
+  queryFn: () => fetchComments(id, token,logout),
+});
+
+const commentMutation = useMutation({
+  mutationFn: addComment,
+  onSuccess: () => {
+    queryClient.invalidateQueries(["comments", id]);
+     queryClient.invalidateQueries({ queryKey: ["ticket", id] });
+      setComment("");
+    toast.success("Comment added");
+  },
+});
+
+
   if (isLoading) return <Spin size="large" />;
 
   if (isError)  return (
@@ -149,7 +247,7 @@ const updateMutation=useMutation({
 
   return (
     <ViewTicketWrapper>
-      <TicketCard title={data.title}
+      <TicketCard title={data.title }
       extra={
     user?.role === "ADMIN" && (
       <Button type="primary" onClick={() => setEditMode(true)}>
@@ -161,7 +259,7 @@ const updateMutation=useMutation({
         <>
         <Field>
           <span>Description:</span>
-          <p>{data.description}</p>
+          <p>{data.description} {console.log(data)}</p>
         </Field>
 
         <Field>
@@ -270,6 +368,50 @@ const updateMutation=useMutation({
 
   </Select>
 </Field>
+
+<Card title="Comments">
+  {comments?.map(c => (
+    <div key={c.id}>
+      <strong>{c.author}</strong>
+      <small>
+        {" • "}
+        {dayjs(c.createdAt).format("DD MMM YYYY HH:mm")}
+      </small>
+
+      <div
+        dangerouslySetInnerHTML={{ __html: c.content }}
+      />
+      <Divider />
+    </div>
+  ))}
+
+  {canComment && (
+    <>
+      <RichTextEditor value={comment} onChange={setComment} />
+
+      <div style={{ marginTop: 8 }}>
+        <Button
+          type="primary"
+          onClick={() => {
+            if (!comment || comment === "<p><br></p>") {
+              toast.error("Comment cannot be empty");
+              return;
+            }
+            commentMutation.mutate({
+              ticketId: id,
+              content: comment,
+              token,
+            });
+          }}
+        >
+          Add Comment
+        </Button>
+      </div>
+    </>
+  )}
+</Card>
+
+
       </TicketCard>
     </ViewTicketWrapper>
   );

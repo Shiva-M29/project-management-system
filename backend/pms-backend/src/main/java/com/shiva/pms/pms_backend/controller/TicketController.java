@@ -1,6 +1,7 @@
 package com.shiva.pms.pms_backend.controller;
 
 import com.shiva.pms.pms_backend.DTO.CreateTicketRequest;
+import com.shiva.pms.pms_backend.DTO.TicketResponse;
 import com.shiva.pms.pms_backend.DTO.UpdateTicketRequest;
 import com.shiva.pms.pms_backend.entity.Ticket;
 import com.shiva.pms.pms_backend.entity.User;
@@ -27,9 +28,9 @@ public class TicketController {
 
 
     @GetMapping
-    public ResponseEntity<List<Ticket>> getAllTickets()
+    public ResponseEntity<List<TicketResponse>> getAllTickets()
     {
-        List<Ticket> tickets=ticketService.getAllTickets();
+        List<TicketResponse> tickets=ticketService.getAllTickets();
         return ResponseEntity.ok(tickets);
     }
 
@@ -51,7 +52,7 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicketById(@PathVariable Long id,@AuthenticationPrincipal CustomUserDetails userDetails)
+    public ResponseEntity<TicketResponse> getTicketById(@PathVariable Long id,@AuthenticationPrincipal CustomUserDetails userDetails)
     {
         return ResponseEntity.ok(ticketService.getTicketById(id,userDetails.getUser()));
     }

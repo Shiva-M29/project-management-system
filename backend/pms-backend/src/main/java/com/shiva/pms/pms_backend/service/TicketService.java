@@ -1,7 +1,10 @@
 package com.shiva.pms.pms_backend.service;
 
+import com.shiva.pms.pms_backend.DTO.CommentResponse;
 import com.shiva.pms.pms_backend.DTO.CreateTicketRequest;
+import com.shiva.pms.pms_backend.DTO.TicketResponse;
 import com.shiva.pms.pms_backend.DTO.UpdateTicketRequest;
+import com.shiva.pms.pms_backend.entity.Comment;
 import com.shiva.pms.pms_backend.entity.Ticket;
 import com.shiva.pms.pms_backend.entity.User;
 import com.shiva.pms.pms_backend.enums.Role;
@@ -18,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,9 +30,17 @@ public class TicketService {
    private final TicketRepository ticketRepository;
    private final UserRepository userRepository;
 
-  public List<Ticket> getAllTickets()
+  public List<TicketResponse> getAllTickets()
    {
-       return ticketRepository.findAll();
+      List<Ticket> tickets=ticketRepository.findAll();
+
+       List<TicketResponse> ticketResponseList=new ArrayList<>();
+       for(Ticket ticket:tickets)
+       {
+          ticketResponseList.add(new TicketResponse(ticket.getId(),ticket.getTitle(),ticket.getDescription(),ticket.getStatus(),ticket.getLabel(),ticket.getAssignedTo(),ticket.getCreatedBy()));
+       }
+
+       return ticketResponseList;
    }
    public String createTicket(CreateTicketRequest request, CustomUserDetails userDetails)
    {
@@ -81,7 +93,7 @@ public class TicketService {
 //              return ticketRepository.findByCreatedById(user.getId());
              return ticketRepository.findByAssignedToId(user.getId());
     }
-    public Ticket getTicketById(Long id,User loggedInUser)
+    public TicketResponse getTicketById(Long id,User loggedInUser)
     {
        Ticket ticket= ticketRepository.findById(id).orElseThrow(()->new TicketNotFoundException("Ticket Not Found"));
         if (loggedInUser.getRole() != Role.ADMIN && loggedInUser.getRole()!=Role.EMPLOYEE) {
@@ -99,7 +111,7 @@ public class TicketService {
 //            );
 //        }
 
-        return ticket;
+        return new TicketResponse(ticket.getId(),ticket.getTitle(),ticket.getDescription(),ticket.getStatus(),ticket.getLabel(),ticket.getAssignedTo(),ticket.getCreatedBy());
     }
 
 

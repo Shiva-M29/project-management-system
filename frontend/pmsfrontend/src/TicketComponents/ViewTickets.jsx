@@ -145,18 +145,21 @@ useEffect(() => {
     },
   ];
 
+  
+
+
   if (isLoading) return <Spin size="large" />;
 
-  if (isError) {
-    toast.error(error.message);
-    return null;
+ if (isError) {
+     return toast.error(error.message);
   }
+
 
   return (
     <ViewTicketsWrapper>
       <Table
         columns={columns}
-        dataSource={data}
+         dataSource={data}
         rowKey="id"
         pagination={{ pageSize: 8 }}  
       />

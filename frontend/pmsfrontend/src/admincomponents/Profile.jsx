@@ -41,6 +41,29 @@ function getUserForAdmin({userId,token,logout})
             return res.json();
         })
 }
+function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "ckjkjbk"); 
+
+  return fetch(
+    "https://api.cloudinary.com/v1_1/dssoza4nz/image/upload",
+    {
+      method: "POST",
+      body: formData,
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        return response.text().then((text) => {
+          throw new Error("Cloudinary upload failed: " + text);
+        });
+      }
+      return response.json();
+    })
+    .then((data) => data.secure_url); 
+}
+
 
 
  function getUser({token,logout}){
@@ -122,7 +145,7 @@ function Profile() {
   const navigate=useNavigate();
   const {userId}=useParams();
   const isAdminView = Boolean(userId);
-
+const [image,setImage]=useState("");
     const {token,logout,user}=useAuth();
     const [open,setOpen]=useState(false);
     const [field,setField]=useState(null);
@@ -258,7 +281,40 @@ const openEditModal = (fieldName) => {
       <Form
         form={form}
         layout="vertical"
-        onFinish={()=>{mutation.mutate({username:data.username,updatedData:form.getFieldsValue(),token,logout})}}
+        onFinish={()=>{
+          if (field === "displayPicture") {
+    if (!image) {
+      toast.error("Please select an image");
+      return;
+    }
+
+    uploadToCloudinary(image)
+      .then((imageUrl) => {
+       const updatedData = { displayPicture: imageUrl };
+
+        mutation.mutate({
+          username: data.username,
+          updatedData,
+          token,
+          logout,
+        });
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
+
+    return; 
+  }
+
+  
+  mutation.mutate({
+    username: data.username,
+    updatedData,
+    token,
+    logout,
+  });
+          // mutation.mutate({username:data.username,updatedData:form.getFieldsValue(),token,logout})
+        }}
         validateTrigger="onSubmit"
         onFinishFailed={()=>setTimeout(()=>form.resetFields(), 1000)}
       >
@@ -297,12 +353,20 @@ const openEditModal = (fieldName) => {
         )}
 
         {field === "displayPicture" && (
-          <Form.Item
-            label="Profile Picture URL"
-            name="displayPicture"
-          >
-            <Input />
-          </Form.Item>
+          // <Form.Item
+          //   label="Profile Picture URL"
+          //   name="displayPicture"
+          // >
+          //   <input type="file" onChange={(e)=>setImage(e.target.files[0])} />
+          // </Form.Item>
+          <Form.Item label="Profile Picture">
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => setImage(e.target.files[0])}
+  />
+</Form.Item>
+
 )}
  
       </Form>

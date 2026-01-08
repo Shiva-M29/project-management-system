@@ -1,6 +1,8 @@
 
 
 
+
+
 import {
   HomeWrapper,
   Title,
@@ -29,3 +31,4 @@ const Home = () => {
 };
 
 export default Home;
+
