@@ -13,9 +13,11 @@ import com.shiva.pms.pms_backend.enums.TicketStatus;
 import com.shiva.pms.pms_backend.exception.TicketNotFoundException;
 import com.shiva.pms.pms_backend.exception.UserNotFoundException;
 import com.shiva.pms.pms_backend.exception.UsernameAlreadyExistsException;
+import com.shiva.pms.pms_backend.repository.CommentRepository;
 import com.shiva.pms.pms_backend.repository.TicketRepository;
 import com.shiva.pms.pms_backend.repository.UserRepository;
 import com.shiva.pms.pms_backend.security.CustomUserDetails;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,15 @@ import java.util.List;
 public class TicketService {
    private final TicketRepository ticketRepository;
    private final UserRepository userRepository;
+   private final CommentRepository commentRepository;
+
+//   public TicketService(TicketRepository ticketRepository,UserRepository userRepository,CommentRepository commentRepository)
+//   {
+//       this.ticketRepository=ticketRepository;
+//       this.commentRepository=commentRepository;
+//       this.userRepository=userRepository;
+//
+//   }
 
   public List<TicketResponse> getAllTickets()
    {
@@ -89,8 +100,6 @@ public class TicketService {
     public List<Ticket> getMyTickets(CustomUserDetails userDetails)
     {
              User user=userDetails.getUser();
-//             if(user.getRole()==Role.ADMIN)
-//              return ticketRepository.findByCreatedById(user.getId());
              return ticketRepository.findByAssignedToId(user.getId());
     }
     public TicketResponse getTicketById(Long id,User loggedInUser)
@@ -144,6 +153,9 @@ public class TicketService {
          return "Ticket Status updated to "+newStatus;
     }
 
+
+
+
     public String deleteTicket(Long id,User user)
     {
         Ticket ticket=ticketRepository.findById(id).orElseThrow(()-> new TicketNotFoundException("Ticket Not Found"));
@@ -152,6 +164,7 @@ public class TicketService {
                     HttpStatus.FORBIDDEN,
                     "You are not allowed to delete this ticket"
             );
+
 
         ticketRepository.deleteById(ticket.getId());
         return "Ticket deleted";

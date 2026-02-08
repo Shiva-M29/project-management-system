@@ -15,16 +15,9 @@ import com.shiva.pms.pms_backend.security.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.UUID;
+
 
 @Service
 public class UserService {
@@ -109,7 +102,7 @@ public class UserService {
     public List<User> getAllPendingUsers(UserStatus userStatus)
     {
 
-        List<User> pendingUsers=userRepository.findByStatus(userStatus);
+        List<User> pendingUsers=userRepository.findByRoleAndStatus(Role.EMPLOYEE,userStatus);
         if(pendingUsers.isEmpty())
          throw new UserNotFoundException("No Users with status Pending");
         return pendingUsers;
@@ -185,6 +178,10 @@ public class UserService {
   {
       User user=userRepository.findByUsername(username).orElseThrow(()->new UserNotFoundException("User Not Found"));
       List<Ticket> tickets=ticketRepository.findByAssignedToId(user.getId());
+      for(Ticket ticket:tickets)
+      {
+          ticketRepository.delete(ticket);
+      }
 
       userRepository.delete(user);
   }

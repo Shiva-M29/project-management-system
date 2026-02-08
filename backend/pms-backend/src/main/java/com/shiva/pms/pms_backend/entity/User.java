@@ -46,7 +46,6 @@ public class User {
     @Column(nullable = false)
     private String displayPicture;
 
-//    @Column(length = 255)
     private String bio;
 
     @Enumerated(EnumType.STRING)

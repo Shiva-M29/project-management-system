@@ -146,7 +146,7 @@ function Profile() {
   const {userId}=useParams();
   const isAdminView = Boolean(userId);
 const [image,setImage]=useState("");
-    const {token,logout,user}=useAuth();
+    const {token,logout,user,login}=useAuth();
     const [open,setOpen]=useState(false);
     const [field,setField]=useState(null);
     const allowed = user.role === "ADMIN" || user.role === "EMPLOYEE";
@@ -156,16 +156,17 @@ const [image,setImage]=useState("");
         return navigate("/");
       }
     }, [allowed]);
+   
+          
     const {data,error,isError,isLoading}=useQuery(
         {
               queryKey: isAdminView ? ["profile", userId] : ["profile"],
             queryFn: ()=>isAdminView
       ? getUserForAdmin({ userId, token, logout })
       : getUser({ token, logout }),
+
         }
     )
-
-   
 const openEditModal = (fieldName) => {
   setField(fieldName);
   form.setFieldsValue({ [fieldName]: data[fieldName] });
@@ -179,22 +180,21 @@ const openEditModal = (fieldName) => {
   }
   return updateUser(payload);
 },
-        onSuccess: () => {
-            
-            const requiresRelogin =
+        onSuccess: () => {  
+const requiresRelogin =
     !isAdminView && (field === "username" || field === "password");
-
       if (requiresRelogin) {
-      toast.success("Profile updated. Please log in again.");
-    setTimeout(logout,3000);
-      
-       return;
+        toast.info("Please log in again with your new credentials");
+        setTimeout(() => {
+          logout();
+        }, 1500);
              }
-    
+    else {
             toast.success("Profile updated successfully");
             isAdminView
   ? queryClient.invalidateQueries({ queryKey: ['profile', userId] })
   : queryClient.invalidateQueries({ queryKey: ['profile'] });
+    }
 
             setOpen(false);
             form.resetFields();
@@ -281,7 +281,7 @@ const openEditModal = (fieldName) => {
       <Form
         form={form}
         layout="vertical"
-        onFinish={()=>{
+        onFinish={(updatedData)=>{
           if (field === "displayPicture") {
     if (!image) {
       toast.error("Please select an image");
@@ -313,7 +313,7 @@ const openEditModal = (fieldName) => {
     token,
     logout,
   });
-          // mutation.mutate({username:data.username,updatedData:form.getFieldsValue(),token,logout})
+          
         }}
         validateTrigger="onSubmit"
         onFinishFailed={()=>setTimeout(()=>form.resetFields(), 1000)}
@@ -353,12 +353,7 @@ const openEditModal = (fieldName) => {
         )}
 
         {field === "displayPicture" && (
-          // <Form.Item
-          //   label="Profile Picture URL"
-          //   name="displayPicture"
-          // >
-          //   <input type="file" onChange={(e)=>setImage(e.target.files[0])} />
-          // </Form.Item>
+          
           <Form.Item label="Profile Picture">
   <input
     type="file"

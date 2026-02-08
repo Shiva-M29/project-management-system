@@ -43,8 +43,7 @@ function deleteUser({username, token, logout}) {
                     logout();
                 }, 3000);
             }
-            if(response.status===403)
-                throw new Error("delete tickets assigned to "+username+" to delete "+username);
+            
             return response.text().then(msg => {
                 throw new Error(msg);
             });

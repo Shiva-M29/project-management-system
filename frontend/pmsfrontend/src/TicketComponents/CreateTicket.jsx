@@ -66,6 +66,7 @@ useEffect(() => {
         mutationFn:createTicket,
         onSuccess: (data) => {
             toast.success(data);
+            navigate("/admin")
         },
         onError: (error) => {
             toast.error(error.message);

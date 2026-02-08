@@ -8,7 +8,7 @@ import {toast} from "react-toastify";
 
 
 
- function loginapi(data) {
+ export function loginapi(data) {
     return fetch('http://localhost:8080/auth/login', {
         method: 'POST',
         headers: {
@@ -38,10 +38,10 @@ function Login()
        const role=data.user.role;
        if(role==="ADMIN")
        {
-        navigate("/admin");
+        navigate("/admin/profile");
        }
        else
-        navigate("/employee");
+        navigate("/employee/profile");
         
     }
 , onError: (error) => {

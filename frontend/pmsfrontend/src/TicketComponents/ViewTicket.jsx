@@ -288,6 +288,7 @@ const commentMutation = useMutation({
     title: data.title,
     description: data.description,
     label: data.label,
+    assignedToUserId:data.assignedTo.username
   }}
   onFinish={(values) => {
     updateMutation.mutate({ id, ticketData: values });
@@ -338,7 +339,10 @@ const commentMutation = useMutation({
   <Divider />
 
   <Field>
+    { data.status!== "DEPLOYED" &&
+    <>
   <span>Change Status:</span>
+ 
   <Select
     value={data.status}
     style={{ width: 220 }}
@@ -347,6 +351,7 @@ const commentMutation = useMutation({
       statusMutation.mutate({ id, status: newStatus })
     }
   >
+
     {user.role==="ADMIN" && (
         <>
     <Select.Option value="TODO">TODO</Select.Option>
@@ -367,6 +372,9 @@ const commentMutation = useMutation({
     }
 
   </Select>
+
+</>
+}
 </Field>
 
 <Card title="Comments">

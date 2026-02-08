@@ -45,6 +45,12 @@ const Topbar = () => {
           </>
         )}
 
+        {user.role === "EMPLOYEE" && (
+          <NavItem to={`${basePath}/my-tickets`}>
+            My Tickets
+          </NavItem>
+        )}
+
         <NavItem to={`${basePath}/profile`}>
           Profile
         </NavItem>

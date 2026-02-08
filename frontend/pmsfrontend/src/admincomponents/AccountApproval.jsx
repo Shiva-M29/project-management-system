@@ -79,8 +79,18 @@ function AccountApproval() {
         queryFn: () => fetchPendingAccounts(token, logout),
     });
 
+    const [isActionInProgress, setIsActionInProgress] = React.useState(false);
     const mutationApprove = useMutation({
         mutationFn: approveAccount,
+        onMutate: () => {
+            setIsActionInProgress(true);
+        },
+        onSettled: () => {
+            setTimeout(() => {
+                setIsActionInProgress(false);
+            }, 6500);
+            
+        },
         onSuccess: () => {
            toast.success("Account Approved");
             queryClient.invalidateQueries(['pendingAccounts']);
@@ -90,6 +100,14 @@ function AccountApproval() {
     });
     const mutationReject = useMutation({
         mutationFn: rejectAccount,
+        onMutate: () => {
+            setIsActionInProgress(true);
+        },
+        onSettled: () => {
+            setTimeout(() => {
+                setIsActionInProgress(false);
+            }, 3500);
+        },
         onSuccess: () => {
             toast.error("Account Rejected");
             queryClient.invalidateQueries(['pendingAccounts']);
@@ -98,6 +116,9 @@ function AccountApproval() {
             toast.error("Rejection Failed");
         }
     });
+
+    
+
        
     if (isLoading) {
         return (
@@ -111,9 +132,8 @@ function AccountApproval() {
         return (
     <ErrorWrapper>
       <Alert
-        message="Failed to load data"
         description={error.message}
-        type="error"
+        type="info"
         showIcon
       />
     </ErrorWrapper>
@@ -122,17 +142,18 @@ function AccountApproval() {
     return (
         <PageWrapper>
     <ApprovalCard title="Pending Account Approvals">
-     {data.map((account) =>(
+     {data?.map((account) =>(
           <UserRow key={account.id}>
             <UserInfo>
               <span>{account.username}</span>
               <span>{account.email}</span>
             </UserInfo>
-
+ {!isActionInProgress &&
             <Actions>
-              <ApproveButton size="small" onClick={() => mutationApprove.mutate({username: account.username, token, logout})}>Approve</ApproveButton>
-              <RejectButton size="small" onClick={() => mutationReject.mutate({username: account.username, token, logout})}>Reject</RejectButton>
+                                <ApproveButton size="small" onClick={() =>{ mutationApprove.mutate({username: account.username, token, logout})}} loading={isActionInProgress} disabled={isActionInProgress}>Approve</ApproveButton>
+                                <RejectButton size="small" onClick={() => mutationReject.mutate({username: account.username, token, logout})} loading={isActionInProgress} disabled={isActionInProgress}>Reject</RejectButton>
             </Actions>
+}
           </UserRow>
      )
         )}
