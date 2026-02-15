@@ -3,11 +3,14 @@ import { NavLink } from "react-router-dom";
 
 export const TopbarWrapper = styled.div`
   height: 64px;
-  background: white;
+  // background: white;
   display: flex;
   align-items: center;
+  background: linear-gradient(90deg, #ffffff, #f8fafc);
+border-bottom: 1px solid #e2e8f0;
+box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
   padding: 0 24px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  // box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 `;
 
 export const Left = styled.div`
@@ -23,21 +26,25 @@ export const Center = styled.div`
 
 export const NavItem = styled(NavLink)`
   text-decoration: none;
-  color: #334155;
-  font-weight: 500;
-  padding: 8px 18px;
+  color: #194076;
+  font-weight: 600;
+  padding: 8px 20px;
   border-radius: 999px;
+  letter-spacing: 0.3px;
   transition: all 0.25s ease;
 
+  background: #ebeeef;
+
   &:hover {
-    background: #e0e7ff;
-    color: #1d4ed8;
+    background: #e2e8f0;
+    color: #1e293b;
+    transform: translateY(-1px);
   }
 
   &.active {
-    background: #2563eb;
+    background: linear-gradient(135deg, #2563eb, #1e3a8a);
     color: white;
-    box-shadow: 0 4px 10px rgba(37,99,235,0.25);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
   }
 `;
 
@@ -46,7 +53,7 @@ export const UserBox = styled.div`
   padding: 8px 14px;
   border-radius: 999px;
   font-weight: 500;
-  color: #0f172a;
+ color: #194076;
 `;
 export const Right = styled.div`
   display: flex;

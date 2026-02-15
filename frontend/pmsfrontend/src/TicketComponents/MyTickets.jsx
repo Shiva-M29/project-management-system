@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { ViewTicketsWrapper } from "./ViewTickets.styled";
 import { useNavigate } from "react-router-dom";
+import { TableHeader } from "../TableHeader.styled";
+import { ViewButton } from "../admincomponents/AccountApproval.styled";
 
 function mytickets(token) {
   return fetch("http://localhost:8080/api/tickets/my", {
@@ -40,27 +42,27 @@ function MyTickets() {
 
     const columns = [
     {
-      title: "Title",
+      title: <TableHeader>TITLE</TableHeader>,
       dataIndex: "title"
     },
     {
-      title: "Status",
+      title: <TableHeader>STATUS</TableHeader>,
       dataIndex: "status"
     },
     {
-      title: "Assigned To",
+      title: <TableHeader>ASSIGNED TO</TableHeader>,
       dataIndex: ["assignedTo", "username"]
     },
     {
-      title: "Created By",
+      title: <TableHeader>CREATED BY</TableHeader>,
       dataIndex: ["createdBy", "username"]
     },
     {
-      title: "Actions",
+      title: <TableHeader>ACTIONS</TableHeader>,
       key: "actions",
       render: (_, record) => (
         <Space>
-          <Button
+          <ViewButton
             size="small"
             onClick={() =>
               navigate(
@@ -70,7 +72,7 @@ function MyTickets() {
             }
           >
             View/Update
-          </Button>
+          </ViewButton>
 
           {user?.role === "ADMIN" && (
           <Popconfirm

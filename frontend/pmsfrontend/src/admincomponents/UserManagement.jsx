@@ -2,7 +2,7 @@ import { useMutation, useQuery,useQueryClient} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthProvider";
 import { toast } from "react-toastify";
-import {useEffect} from "react";
+import {useState,useEffect} from "react";
 import { Spin, Alert } from "antd";
 import { PageWrapper, ApprovalCard, UserRow, UserInfo, Actions,ViewButton,DeleteButton,LoadingText,LoadingWrapper,ErrorWrapper} from './AccountApproval.styled';
 
@@ -66,15 +66,24 @@ function UserManagement() {
     }, [allowed]);
     
 
-    
+    const [isActionInProgress, setIsActionInProgress] = useState(false);
     const { data, isLoading, error } = useQuery({
         queryKey:['users'], 
-        queryFn:() => fetchUsers({token, logout})
+        queryFn:() => fetchUsers({token, logout}),
+        retry:2
     });
   const deleteMutation=useMutation({
     mutationFn : deleteUser,
-        onSuccess : () => {
-          toast.success("User deleted");
+    onMutate: () => {
+        setIsActionInProgress(true);
+    },
+    onSettled: () => {
+        setTimeout(() => {
+            setIsActionInProgress(false);
+        }, 3500);
+    },
+        onSuccess : (suc) => {
+          toast.success(`${suc}`);
           queryClient.invalidateQueries(['users']);
         },
         onError: (error) => {
@@ -118,7 +127,7 @@ if (isLoading) {
               <ViewButton size="small" onClick={() => navigate(`/admin/profile/${account.id}`)}>View</ViewButton>
 
               {account.role==="EMPLOYEE" && 
-              <DeleteButton size="small" onClick={()=>deleteMutation.mutate({username: account.username,token,logout})}>Delete</DeleteButton>
+              <DeleteButton size="small" onClick={()=>deleteMutation.mutate({username: account.username,token,logout})} loading={isActionInProgress} >Delete</DeleteButton>
 }
             </Actions>
           </UserRow>

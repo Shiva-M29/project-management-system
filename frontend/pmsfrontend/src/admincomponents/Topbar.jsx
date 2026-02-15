@@ -7,6 +7,7 @@ import {
 } from "./topbarStyles";
 import {useAuth} from "../AuthProvider";
 import {toast} from "react-toastify";
+import { Nav } from "../HomeComponents/NavBar.styled";
 
 const Topbar = () => {
     const {user,logout}=useAuth();
@@ -23,7 +24,7 @@ const Topbar = () => {
   return (
     <TopbarWrapper>
       <Left>
-        <UserBox>{user.role==="ADMIN"?"Admin":"Employee"}</UserBox>
+        <UserBox>{user.role==="ADMIN"?"ADMIN":"EMPLOYEE"}</UserBox>
       </Left>
 
         <Center>
@@ -42,6 +43,7 @@ const Topbar = () => {
             <NavItem to={`${basePath}/manageusers`}>
               Users
             </NavItem>
+            <NavItem to={`${basePath}/pr-tickets`}>PR Review </NavItem>
           </>
         )}
 

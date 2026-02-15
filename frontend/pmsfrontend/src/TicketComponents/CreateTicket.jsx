@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation,useQuery } from "@tanstack/react-query";
 import { Form ,Input,Select,Button} from "antd";
 import {PageWrapper, RegisterCard, Title, SubmitButton} from '../AuthComponents/Register.styled';
+import { TicketPageWrapper,TicketCard} from "./CreateTicket.styled";
 const { TextArea } = Input;
  export function fetchEmployees(token, logout) {
     return fetch("http://localhost:8080/admin/employees", {
@@ -87,8 +88,8 @@ useEffect(() => {
     }
 
     return (
-        <PageWrapper>
-       <RegisterCard>
+        <TicketPageWrapper>
+       <TicketCard>
       <Title>Create Ticket</Title>
         <Form
           layout="vertical"
@@ -152,8 +153,8 @@ useEffect(() => {
             </Button>
           </Form.Item>
         </Form>
-      </RegisterCard>
-    </PageWrapper>);
+      </TicketCard>
+    </TicketPageWrapper>);
 
 }
 

@@ -77,6 +77,7 @@ function AccountApproval() {
     const { data, error, isLoading } = useQuery({
         queryKey: ['pendingAccounts'],
         queryFn: () => fetchPendingAccounts(token, logout),
+        retry: 2
     });
 
     const [isActionInProgress, setIsActionInProgress] = React.useState(false);
@@ -88,12 +89,14 @@ function AccountApproval() {
         onSettled: () => {
             setTimeout(() => {
                 setIsActionInProgress(false);
-            }, 6500);
+            }, 3500);
+            
             
         },
         onSuccess: () => {
            toast.success("Account Approved");
             queryClient.invalidateQueries(['pendingAccounts']);
+           
         },
         onError: (error) => {
             toast.error("Approval Failed");        }
@@ -107,6 +110,7 @@ function AccountApproval() {
             setTimeout(() => {
                 setIsActionInProgress(false);
             }, 3500);
+            
         },
         onSuccess: () => {
             toast.error("Account Rejected");
@@ -148,12 +152,12 @@ function AccountApproval() {
               <span>{account.username}</span>
               <span>{account.email}</span>
             </UserInfo>
- {!isActionInProgress &&
+ {/* {!isActionInProgress && */}
             <Actions>
-                                <ApproveButton size="small" onClick={() =>{ mutationApprove.mutate({username: account.username, token, logout})}} loading={isActionInProgress} disabled={isActionInProgress}>Approve</ApproveButton>
-                                <RejectButton size="small" onClick={() => mutationReject.mutate({username: account.username, token, logout})} loading={isActionInProgress} disabled={isActionInProgress}>Reject</RejectButton>
+                                <ApproveButton size="small" onClick={() =>{ mutationApprove.mutate({username: account.username, token, logout})}} loading={isActionInProgress} >Approve</ApproveButton>
+                                <RejectButton size="small" onClick={() => mutationReject.mutate({username: account.username, token, logout})} loading={isActionInProgress} >Reject</RejectButton>
             </Actions>
-}
+{/* } */}
           </UserRow>
      )
         )}

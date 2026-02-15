@@ -4,13 +4,16 @@ import {
   Space,
   Spin,
   Popconfirm,
+  Select
 } from "antd";
-import { use, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery,useMutation,useQueryClient} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../AuthProvider";
 import { ViewTicketsWrapper } from "./ViewTickets.styled";
+import { ViewButton,DeleteButton } from "../admincomponents/AccountApproval.styled";
+import { TableHeader } from "../TableHeader.styled";
 
 function handleDelete2({id,token,logout}) {
   return fetch(`http://localhost:8080/api/tickets/${id}`, {
@@ -40,6 +43,9 @@ export default function ViewTickets() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { token, logout,user } = useAuth();
+  const {Option} =Select; 
+  const [ticketType, setTicketType] = useState(null);
+  const [ticketStatus, setTicketStatus] = useState(null);
  const allowed = user.role === "ADMIN" || user.role === "EMPLOYEE";
 useEffect(() => {
   if (!allowed) {
@@ -61,7 +67,18 @@ useEffect(() => {
   });
 
   const fetchTickets = () => {
-    return fetch("http://localhost:8080/api/tickets", {
+    let params = new URLSearchParams();
+
+if (ticketType) {
+  params.append("ticketType", ticketType);
+}
+
+if (ticketStatus) {
+  params.append("ticketStatus", ticketStatus);
+}
+
+const url = `http://localhost:8080/api/tickets${params.toString() ? "?" + params.toString() : ""}`;
+    return fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -83,40 +100,53 @@ useEffect(() => {
   };
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["tickets"],
+    queryKey: ["tickets", ticketType, ticketStatus],
     queryFn: fetchTickets,
   });
 
-  const handleDelete = (id) => {
-    toast.info("Delete API not connected yet");
-    console.log("Delete ticket:", id);
-  };
+  
 
 
 
   const columns = [
     {
-      title: "Title",
+      title: <TableHeader>
+        TITLE
+     </TableHeader>,
       dataIndex: "title"
     },
     {
-      title: "Status",
+      title: <TableHeader>
+        STATUS
+      </TableHeader>,
       dataIndex: "status"
     },
     {
-      title: "Assigned To",
+       title: <TableHeader>
+        TYPE
+      </TableHeader>,
+       dataIndex: "label"
+     },
+    {
+      title: <TableHeader >
+        ASSIGNED TO
+      </TableHeader>,
       dataIndex: ["assignedTo", "username"]
     },
     {
-      title: "Created By",
+      title: <TableHeader>
+        CREATED BY
+      </TableHeader>,
       dataIndex: ["createdBy", "username"]
     },
     {
-      title: "Actions",
+      title: <TableHeader >
+        ACTIONS
+      </TableHeader>,
       key: "actions",
       render: (_, record) => (
         <Space>
-          <Button
+          <ViewButton
             size="small"
             onClick={() =>
               navigate(
@@ -128,16 +158,16 @@ useEffect(() => {
             }
           >
             View/Update
-          </Button>
+          </ViewButton>
 
           {user?.role === "ADMIN" && (
           <Popconfirm
             title="Delete ticket?"
             onConfirm={() => deleteMutation.mutate({id:record.id,token,logout})}
           >
-            <Button size="small" danger>
+            <DeleteButton size="small" danger>
               Delete
-            </Button>
+            </DeleteButton>
           </Popconfirm>
           )}
         </Space>
@@ -157,6 +187,27 @@ useEffect(() => {
 
   return (
     <ViewTicketsWrapper>
+      <Select placeholder={ticketType?ticketType:"Ticket Type"} style={{ width: 150, marginRight: 10 }} onChange={(value) => {
+        setTicketType(value);
+      }}>
+        <Option value={null}>All Tickets</Option>
+        <Option value="BUG">Bug</Option>
+        <Option value="FEATURE">Feature</Option>
+        <Option value="SUPPORT">Support</Option>
+        <Option value="TASK">TASK</Option>
+        <Option value="IMPROVEMENT">Improvement</Option>
+      </Select>
+      <Select placeholder={ticketStatus?ticketStatus:"Ticket Status"} style={{ width: 150 }} onChange={(value) => {
+        setTicketStatus(value);
+      }}>
+        <Option value={null}>All Tickets</Option>
+        <Option value="TODO">To Do</Option>
+        <Option value="IN_PROGRESS">In Progress</Option>
+        <Option value="PAUSED">Paused</Option>
+        <Option value="PR_REVIEW">PR Review</Option>
+        <Option value="READY_TO_DEPLOY">Ready to Deploy</Option>
+        <Option value="DEPLOYED">Deployed</Option>
+      </Select>
       <Table
         columns={columns}
          dataSource={data}

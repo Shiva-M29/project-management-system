@@ -13,6 +13,7 @@ import UserManagement from './admincomponents/UserManagement';
 import CreateTicket from './TicketComponents/CreateTicket';
 import Profile from './admincomponents/Profile';
 import MyTickets from './TicketComponents/MyTickets';
+import PRTickets from './TicketComponents/PRTickets';
 
 function App() {
   const router = createBrowserRouter([
@@ -69,6 +70,10 @@ function App() {
       path: "profile",
       element: <Profile />,
      },
+     {
+      path: "pr-tickets",
+      element: <PRTickets /> 
+     }
 
     ]
   }
