@@ -174,7 +174,7 @@ public class UserService {
         return new UserProfileResponse(user.getUsername(), user.getEmail(), user.getRole(),user.getStatus(), user.getBio(), user.getDisplayPicture());
 
     }
-  public void deleteuser(String username)
+  public String deleteuser(String username)
   {
       User user=userRepository.findByUsername(username).orElseThrow(()->new UserNotFoundException("User Not Found"));
       List<Ticket> tickets=ticketRepository.findByAssignedToId(user.getId());
@@ -184,6 +184,7 @@ public class UserService {
       }
 
       userRepository.delete(user);
+      return username+" deleted succefully";
   }
 
 

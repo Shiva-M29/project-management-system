@@ -45,13 +45,7 @@ public class Ticket {
         @JoinColumn(name = "assigned_to", nullable = false)
         private User assignedTo;
 
-//        @OneToMany(
-//                mappedBy = "ticket",
-////                cascade = CascadeType.ALL,
-////                orphanRemoval = true,
-//                fetch = FetchType.EAGER
-//        )
-//        private List<Comment> comments;
+
 
 
 

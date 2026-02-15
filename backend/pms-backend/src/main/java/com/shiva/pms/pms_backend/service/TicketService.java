@@ -17,7 +17,6 @@ import com.shiva.pms.pms_backend.repository.CommentRepository;
 import com.shiva.pms.pms_backend.repository.TicketRepository;
 import com.shiva.pms.pms_backend.repository.UserRepository;
 import com.shiva.pms.pms_backend.security.CustomUserDetails;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,18 +32,27 @@ public class TicketService {
    private final UserRepository userRepository;
    private final CommentRepository commentRepository;
 
-//   public TicketService(TicketRepository ticketRepository,UserRepository userRepository,CommentRepository commentRepository)
-//   {
-//       this.ticketRepository=ticketRepository;
-//       this.commentRepository=commentRepository;
-//       this.userRepository=userRepository;
-//
-//   }
 
-  public List<TicketResponse> getAllTickets()
+
+  public List<TicketResponse> getAllTickets(TicketLabel ticketType,TicketStatus ticketStatus)
    {
-      List<Ticket> tickets=ticketRepository.findAll();
+       List<Ticket> tickets;
+       if (ticketType != null && ticketStatus != null) {
+           tickets=ticketRepository
+                   .findByLabelAndStatus(ticketType, ticketStatus);
+       }
 
+      else  if (ticketType != null) {
+           tickets=ticketRepository.findByLabel(ticketType);
+       }
+
+      else  if (ticketStatus != null) {
+          tickets= ticketRepository.findByStatus(ticketStatus);
+       }
+      else {
+
+           tickets = ticketRepository.findAll();
+       }
        List<TicketResponse> ticketResponseList=new ArrayList<>();
        for(Ticket ticket:tickets)
        {
@@ -113,12 +121,7 @@ public class TicketService {
         }
 
 
-//        if (!ticket.getAssignedTo().getId().equals(loggedInUser.getId())) {
-//            throw new ResponseStatusException(
-//                    HttpStatus.FORBIDDEN,
-//                    "You are not allowed to update this ticket"
-//            );
-//        }
+
 
         return new TicketResponse(ticket.getId(),ticket.getTitle(),ticket.getDescription(),ticket.getStatus(),ticket.getLabel(),ticket.getAssignedTo(),ticket.getCreatedBy());
     }
@@ -216,5 +219,13 @@ public class TicketService {
 
         return "Ticket updated successfully";
     }
-
+public List<Ticket> prTickets(CustomUserDetails userDetails)
+{
+    User user=userDetails.getUser();
+    if(user.getRole()!=Role.ADMIN)
+    {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"You are not allowed to view pr_review Tickets");
+    }
+    return ticketRepository.findByStatus(TicketStatus.PR_REVIEW);
+}
 }

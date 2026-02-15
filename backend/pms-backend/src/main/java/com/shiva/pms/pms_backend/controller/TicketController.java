@@ -28,9 +28,9 @@ public class TicketController {
 
 
     @GetMapping
-    public ResponseEntity<List<TicketResponse>> getAllTickets()
+    public ResponseEntity<List<TicketResponse>> getAllTickets(@RequestParam (required = false) TicketLabel ticketType,@RequestParam (required = false) TicketStatus ticketStatus)
     {
-        List<TicketResponse> tickets=ticketService.getAllTickets();
+        List<TicketResponse> tickets=ticketService.getAllTickets(ticketType,ticketStatus);
         return ResponseEntity.ok(tickets);
     }
 
@@ -82,6 +82,12 @@ public class TicketController {
                         userDetails.getUser()
                 )
         );
+    }
+
+    @GetMapping("/pr")
+    public ResponseEntity<List<Ticket>> prTickets(@AuthenticationPrincipal CustomUserDetails userDetails)
+    {
+        return ResponseEntity.ok(ticketService.prTickets(userDetails));
     }
 
 

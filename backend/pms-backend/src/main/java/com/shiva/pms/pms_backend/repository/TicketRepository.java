@@ -1,8 +1,10 @@
 package com.shiva.pms.pms_backend.repository;
 
+import com.shiva.pms.pms_backend.DTO.TicketResponse;
 import com.shiva.pms.pms_backend.entity.Ticket;
 import com.shiva.pms.pms_backend.entity.User;
 import com.shiva.pms.pms_backend.enums.TicketLabel;
+import com.shiva.pms.pms_backend.enums.TicketStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,6 +17,9 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
             TicketLabel label,
             User assignedTo
     );
+List<Ticket> findByStatus(TicketStatus status);
+List<Ticket> findByLabel(TicketLabel label);
 
 
+    List<Ticket> findByLabelAndStatus(TicketLabel ticketType, TicketStatus ticketStatus);
 }
