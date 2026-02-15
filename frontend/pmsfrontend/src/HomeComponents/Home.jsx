@@ -1,38 +1,4 @@
 
-
-
-
-
-// import {
-//   HomeWrapper,
-//   Title,
-//   Description,
-//   Features,
-// } from './Home.styled';
-
-// const Home = () => {
-//   return (
-//     <HomeWrapper>
-//       <Title>Project Management System</Title>
-
-//       <Description>
-//         A modern ticket management platform to track tasks, bugs, and features
-//         efficiently across teams.
-//       </Description>
-
-//       <Features>
-//         ✔ Role-based access (Admin & Employee)<br />
-//         ✔ Secure JWT Authentication<br />
-//         ✔ Task & Ticket Lifecycle Management<br />
-//         ✔ Real-time Status Tracking
-//       </Features>
-//     </HomeWrapper>
-//   );
-// };
-
-
-
-// export default Home;
 import styled from "styled-components";
 
 export const PageWrapper = styled.div`
@@ -43,7 +9,7 @@ export const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
 
-  /* Allow page to grow naturally for browser scroll */
+  
   min-height: calc(100vh - 80px);
 `;
 
@@ -76,7 +42,7 @@ export const ImageContainer = styled.div`
   width: 50%;
   aspect-ratio: 16 / 9;
   border-radius: 20px;
-  // margin: clamp(2rem, 6vw, 4rem) 0;
+  
   margin: clamp(2rem, 6vw, 4rem) auto;
   margin-top: 0;
   overflow: hidden;

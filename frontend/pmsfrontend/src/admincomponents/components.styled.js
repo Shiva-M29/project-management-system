@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
-/* Layout */
+
 export const LayoutWrapper = styled.div`
   display: flex;
   height: 100vh;
@@ -14,7 +14,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
 `;
 
-/* Sidebar */
+
 export const SidebarWrapper = styled.div`
   width: 240px;
   background: #0f172a;
@@ -48,7 +48,7 @@ export const NavItem = styled(NavLink)`
   }
 `;
 
-/* Topbar */
+
 export const TopbarWrapper = styled.div`
   height: 60px;
   background: white;

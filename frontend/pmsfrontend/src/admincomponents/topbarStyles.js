@@ -3,14 +3,14 @@ import { NavLink } from "react-router-dom";
 
 export const TopbarWrapper = styled.div`
   height: 64px;
-  // background: white;
+ 
   display: flex;
   align-items: center;
   background: linear-gradient(90deg, #ffffff, #f8fafc);
 border-bottom: 1px solid #e2e8f0;
 box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
   padding: 0 24px;
-  // box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  
 `;
 
 export const Left = styled.div`

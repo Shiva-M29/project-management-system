@@ -152,12 +152,12 @@ function AccountApproval() {
               <span>{account.username}</span>
               <span>{account.email}</span>
             </UserInfo>
- {/* {!isActionInProgress && */}
+ 
             <Actions>
                                 <ApproveButton size="small" onClick={() =>{ mutationApprove.mutate({username: account.username, token, logout})}} loading={isActionInProgress} >Approve</ApproveButton>
                                 <RejectButton size="small" onClick={() => mutationReject.mutate({username: account.username, token, logout})} loading={isActionInProgress} >Reject</RejectButton>
             </Actions>
-{/* } */}
+
           </UserRow>
      )
         )}

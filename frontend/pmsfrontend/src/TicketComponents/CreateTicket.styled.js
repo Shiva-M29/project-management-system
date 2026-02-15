@@ -17,7 +17,7 @@ export const TicketCard = styled.div`
   background: white;
   box-shadow: 0 30px 70px rgba(0,0,0,0.15);
    .ant-form-item-label > label {
-    color: #4f46e5;   /* Indigo */
+    color: #4f46e5; 
     font-weight: 600;
     font-size: 14px;
   }
