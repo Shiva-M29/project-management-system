@@ -14,9 +14,10 @@ import { useAuth } from "../AuthProvider";
 import { ViewTicketsWrapper } from "./ViewTickets.styled";
 import { ViewButton,DeleteButton } from "../admincomponents/AccountApproval.styled";
 import { TableHeader } from "../TableHeader.styled";
+import { API_URL } from "../config/app";
 
 function handleDelete2({id,token,logout}) {
-  return fetch(`http://localhost:8080/api/tickets/${id}`, {
+  return fetch(`${API_URL}/api/tickets/${id}`, {
     method: "DELETE",
     headers: { 
       Authorization: `Bearer ${token}`,
@@ -77,7 +78,7 @@ if (ticketStatus) {
   params.append("ticketStatus", ticketStatus);
 }
 
-const url = `http://localhost:8080/api/tickets${params.toString() ? "?" + params.toString() : ""}`;
+const url = `${API_URL}/api/tickets${params.toString() ? "?" + params.toString() : ""}`;
     return fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`,

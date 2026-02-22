@@ -3,9 +3,10 @@ import {Form,Input,Button,Radio} from 'antd';
 import { useMutation } from '@tanstack/react-query'; 
 import {PageWrapper, RegisterCard, Title, SubmitButton} from './Register.styled';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from "../config/app";
 
 function registerapi(data) {
-  return fetch('http://localhost:8080/auth/register', {
+  return fetch(`${API_URL}/auth/register`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',

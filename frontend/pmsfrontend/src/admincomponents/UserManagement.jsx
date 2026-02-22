@@ -4,10 +4,11 @@ import { useAuth } from "../AuthProvider";
 import { toast } from "react-toastify";
 import {useState,useEffect} from "react";
 import { Spin, Alert } from "antd";
+import { API_URL } from "../config/app";
 import { PageWrapper, ApprovalCard, UserRow, UserInfo, Actions,ViewButton,DeleteButton,LoadingText,LoadingWrapper,ErrorWrapper} from './AccountApproval.styled';
 
 function fetchUsers({token,logout}) {
-    return fetch('http://localhost:8080/admin/users', {
+    return fetch(`${API_URL}/admin/users`, {
         headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -28,7 +29,7 @@ function fetchUsers({token,logout}) {
     });
 }
 function deleteUser({username, token, logout}) {
-    return fetch(`http://localhost:8080/admin/delete/${username}`, {
+    return fetch(`${API_URL}/admin/delete/${username}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,

@@ -7,9 +7,10 @@ import { Table, Button, Space, Popconfirm, Spin } from "antd";
 import { ViewTicketsWrapper } from "./ViewTickets.styled";
 import { DeleteButton, ViewButton } from "../admincomponents/AccountApproval.styled";
 import { TableHeader } from "../TableHeader.styled";
+import { API_URL } from "../config/app";
 
 function handleDelete2({id,token,logout}) {
-  return fetch(`http://localhost:8080/api/tickets/${id}`, {
+  return fetch(`${API_URL}/api/tickets/${id}`, {
     method: "DELETE",
     headers: { 
       Authorization: `Bearer ${token}`,
@@ -46,7 +47,7 @@ export default function PRTickets() {
 
 
     const fetchPRTickets = () => {
-    return fetch("http://localhost:8080/api/tickets/pr", {
+    return fetch(`${API_URL}/api/tickets/pr`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

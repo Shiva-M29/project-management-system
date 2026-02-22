@@ -6,9 +6,10 @@ import { useMutation,useQuery } from "@tanstack/react-query";
 import { Form ,Input,Select,Button} from "antd";
 import {PageWrapper, RegisterCard, Title, SubmitButton} from '../AuthComponents/Register.styled';
 import { TicketPageWrapper,TicketCard} from "./CreateTicket.styled";
+import { API_URL } from "../config/app";
 const { TextArea } = Input;
  export function fetchEmployees(token, logout) {
-    return fetch("http://localhost:8080/admin/employees", {
+    return fetch(`${API_URL}/admin/employees`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -27,7 +28,7 @@ const { TextArea } = Input;
   }
 
 function createTicket({token, ticketData, logout}) {
-    return fetch('http://localhost:8080/api/tickets', {
+    return fetch(`${API_URL}/api/tickets`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,

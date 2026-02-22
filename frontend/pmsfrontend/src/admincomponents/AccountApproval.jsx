@@ -4,8 +4,9 @@ import { Spin, Alert,notification } from 'antd';
 import { PageWrapper, ApprovalCard, UserRow, UserInfo, Actions,ApproveButton,RejectButton,LoadingText,LoadingWrapper,ErrorWrapper} from './AccountApproval.styled';
 import {toast} from 'react-toastify';
 import { useAuth } from '../AuthProvider';
+import { API_URL } from "../config/app";
 function fetchPendingAccounts(token,logout) {
-    return fetch('http://localhost:8080/admin/pendingusers?status=PENDING', {
+    return fetch(`${API_URL}/admin/pendingusers?status=PENDING`, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
@@ -26,7 +27,7 @@ function fetchPendingAccounts(token,logout) {
     });
 }
 function approveAccount({username,token,logout}) {
-    return fetch(`http://localhost:8080/admin/users/${username}/approve`, {
+    return fetch(`${API_URL}/admin/users/${username}/approve`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -49,7 +50,7 @@ function approveAccount({username,token,logout}) {
 }
 
 function rejectAccount({username,token,logout}) {
-    return fetch(`http://localhost:8080/admin/users/${username}/reject`, {
+    return fetch(`${API_URL}/admin/users/${username}/reject`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

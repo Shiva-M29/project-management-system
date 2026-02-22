@@ -8,6 +8,7 @@ import {fetchEmployees} from "./CreateTicket.jsx";
 import { Alert } from "antd";
 import { ErrorWrapper } from "../admincomponents/AccountApproval.styled";
 import dayjs from "dayjs";
+import { API_URL } from "../config/app";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import {
@@ -17,7 +18,7 @@ import {
 } from "./ViewTicket.styled";
 
 export const fetchComments = (ticketId, token,logout) =>
-  fetch(`http://localhost:8080/api/comments/${ticketId}`, {
+  fetch(`${API_URL}/api/comments/${ticketId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -37,7 +38,7 @@ export const fetchComments = (ticketId, token,logout) =>
   );
 
   export const addComment = ({ ticketId, content, token,logout}) =>
-  fetch(`http://localhost:8080/api/comments/${ticketId}`, {
+  fetch(`${API_URL}/api/comments/${ticketId}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -60,7 +61,7 @@ export const fetchComments = (ticketId, token,logout) =>
   );
 
 function statusUpdate(id, status,logout,token) {
-    return fetch(`http://localhost:8080/api/tickets/${id}/status`, {
+    return fetch(`${API_URL}/api/tickets/${id}/status`, {
         method: 'PATCH',
         headers: {
             "Content-Type": "application/json",
@@ -82,7 +83,7 @@ function statusUpdate(id, status,logout,token) {
     });
 }
 function updateTicket(id, ticketData, logout, token) {
-    return fetch(`http://localhost:8080/api/tickets/${id}`, {
+    return fetch(`${API_URL}/api/tickets/${id}`, {
         method: 'PUT',
         headers: {
             "Content-Type": "application/json",
@@ -155,7 +156,7 @@ useEffect(() => {
 
 
   const fetchTicket = () => {
-    return fetch(`http://localhost:8080/api/tickets/${id}`, {
+    return fetch(`${API_URL}/api/tickets/${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

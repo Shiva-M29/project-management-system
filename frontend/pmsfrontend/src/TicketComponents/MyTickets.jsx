@@ -6,9 +6,10 @@ import { ViewTicketsWrapper } from "./ViewTickets.styled";
 import { useNavigate } from "react-router-dom";
 import { TableHeader } from "../TableHeader.styled";
 import { ViewButton } from "../admincomponents/AccountApproval.styled";
+import { API_URL } from "../config/app";
 
 function mytickets(token) {
-  return fetch("http://localhost:8080/api/tickets/my", {
+  return fetch(`${API_URL}/api/tickets/my`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

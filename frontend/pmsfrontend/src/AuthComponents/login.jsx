@@ -5,11 +5,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useContext } from "react";
 import { useAuth } from "../AuthProvider";
 import {toast} from "react-toastify";
+import { API_URL } from "../config/app";
 
 
 
  export function loginapi(data) {
-    return fetch('http://localhost:8080/auth/login', {
+    return fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

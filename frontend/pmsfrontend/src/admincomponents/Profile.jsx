@@ -5,6 +5,7 @@ import { useState,useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {useNavigate,useParams} from "react-router-dom";
 import { Form, Input, Modal, Tag,Avatar } from "antd";
+import { API_URL } from "../config/app";
 
 import {
   ProfileWrapper,
@@ -20,7 +21,7 @@ import {
 
 function getUserForAdmin({userId,token,logout})
 {
- return fetch(`http://localhost:8080/admin/users/${userId}`,{
+ return fetch(`${API_URL}/admin/users/${userId}`,{
             method:'GET',
             headers:{
                 Authorization:`Bearer ${token}`,
@@ -67,7 +68,7 @@ function uploadToCloudinary(file) {
 
 
  function getUser({token,logout}){
-        return fetch('http://localhost:8080/api/users/me',{
+        return fetch(`${API_URL}/api/users/me`,{
             method:'GET',
             headers:{
                 Authorization:`Bearer ${token}`,
@@ -91,7 +92,7 @@ function uploadToCloudinary(file) {
   function  updateUserByAdmin({username,updatedData,token,logout})
   {
     console.log(username);
-    return fetch(`http://localhost:8080/api/users/adminupdate/${username}`,{
+    return fetch(`${API_URL}/api/users/adminupdate/${username}`,{
             method:'PATCH',
             headers:{
                 Authorization:`Bearer ${token}`,
@@ -116,7 +117,7 @@ function uploadToCloudinary(file) {
   }
     function updateUser({updatedData,token,logout}){
           
-        return fetch(`http://localhost:8080/api/users`,{
+        return fetch(`${API_URL}/api/users`,{
             method:'PATCH',
             headers:{
                 Authorization:`Bearer ${token}`,
